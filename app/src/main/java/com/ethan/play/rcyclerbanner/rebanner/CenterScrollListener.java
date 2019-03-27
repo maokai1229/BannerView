@@ -1,6 +1,7 @@
 package com.ethan.play.rcyclerbanner.rebanner;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 /**
  * Class for centering items after scroll event.<br />
@@ -23,10 +24,15 @@ public class CenterScrollListener extends RecyclerView.OnScrollListener {
         if (!mAutoSet) {
             if (RecyclerView.SCROLL_STATE_IDLE == newState) {
                 final int scrollNeeded = lm.getOffsetCenterView();
+                Log.e("scrollNeeded",scrollNeeded+"");
                 if (CarouselLayoutManager.HORIZONTAL == lm.getOrientation()) {
+
                     recyclerView.smoothScrollBy(scrollNeeded, 0);
+
                 } else {
+
                     recyclerView.smoothScrollBy(0, scrollNeeded);
+
                 }
                 mAutoSet = true;
             }

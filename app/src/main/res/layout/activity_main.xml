@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/play_recycler_view"
+   <com.ethan.play.rcyclerbanner.rebanner.BannerView
+       android:id="@+id/banner"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
+       android:layout_height="160dp"
        android:overScrollMode="never"
-       >
-   </android.support.v7.widget.RecyclerView>
+       app:paddingLeftRight="0dp"/>
+    <!--play_recycler_view   android:id="@+id/play_recycler_view"-->
+
 
 </android.support.constraint.ConstraintLayout>

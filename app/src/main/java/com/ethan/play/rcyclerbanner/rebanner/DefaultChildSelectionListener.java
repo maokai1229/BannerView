@@ -30,7 +30,6 @@ public class DefaultChildSelectionListener extends CarouselChildSelectionListene
     }
 
     public interface OnCenterItemClickListener {
-
         void onCenterItemClicked(@NonNull final RecyclerView recyclerView, @NonNull final CarouselLayoutManager carouselLayoutManager, @NonNull final View v);
     }
 }

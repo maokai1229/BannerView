@@ -1,9 +1,12 @@
 package com.ethan.play.rcyclerbanner.rebanner;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.ethan.play.rcyclerbanner.base.CommonAdapter;
 
 import java.util.Locale;
 
@@ -14,23 +17,19 @@ import java.util.Locale;
 public class ReBanner {
 
     private CarouselLayoutManager layoutManager;
-    private PagerSnapHelper pagerSnapHelper;
-
+    private LinearSnapHelper snapHelper;
 
     public static ReBanner newInstance (){
         return new ReBanner();
     }
 
-
-    public void init(RecyclerView bannerRv, RecyclerView.Adapter adapter){
-        pagerSnapHelper = new PagerSnapHelper();
+    public void init(RecyclerView bannerRv, CommonAdapter adapter){
+        snapHelper = new LinearSnapHelper();
         layoutManager = new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true);
         initRecyclerView(bannerRv, layoutManager,adapter);
     }
 
-
-
-    private void initRecyclerView(final RecyclerView recyclerView, final CarouselLayoutManager layoutManager, final  RecyclerView.Adapter adapter) {
+    private void initRecyclerView(final RecyclerView recyclerView, final CarouselLayoutManager layoutManager, CommonAdapter adapter) {
         // enable zoom effect. this line can be customized
         layoutManager.setPostLayoutListener(new BannnerPostLayoutListener());
 
@@ -41,12 +40,8 @@ public class ReBanner {
         recyclerView.setHasFixedSize(true);
         // sample adapter with random data
         recyclerView.setAdapter(adapter);
-
         // enable center post scrolling
         recyclerView.addOnScrollListener(new CenterScrollListener());
-
-        pagerSnapHelper.attachToRecyclerView(recyclerView);
-
         // enable center post touching on item and item click listener
         DefaultChildSelectionListener.initCenterItemListener(new DefaultChildSelectionListener.OnCenterItemClickListener() {
             @Override
@@ -57,6 +52,7 @@ public class ReBanner {
             }
         }, recyclerView, layoutManager);
 
+        snapHelper.attachToRecyclerView(recyclerView);
         layoutManager.addOnItemSelectionListener(new CarouselLayoutManager.OnCenterItemSelectionListener() {
 
             @Override
@@ -64,13 +60,14 @@ public class ReBanner {
                 if (CarouselLayoutManager.INVALID_POSITION != adapterPosition) {
 
                      // final int value =(BannerAdapter) adapter.mPosition[adapterPosition];
-
 //                    adapter.mPosition[adapterPosition] = (value % 10) + (value / 10 + 1) * 10;
 //                    adapter.notifyItemChanged(adapterPosition);
                 }
             }
         });
     }
+
+
 
 
 

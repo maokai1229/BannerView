@@ -48,6 +48,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
 
     private static final boolean CIRCLE_LAYOUT = false;
 
+
     private boolean mDecoratedChildSizeInvalid;
     private Integer mDecoratedChildWidth;
     private Integer mDecoratedChildHeight;
@@ -207,6 +208,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
                 return getOffsetForCurrentView(view);
             }
         };
+
         linearSmoothScroller.setTargetPosition(position);
         startSmoothScroll(linearSmoothScroller);
     }
@@ -221,11 +223,14 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         //noinspection NumericCastThatLosesPrecision
         final int direction = (int) -Math.signum(directionDistance);
 
+        Log.e("direction" ,direction+"");
+
         if (HORIZONTAL == mOrientation) {
             return new PointF(direction, 0);
         } else {
             return new PointF(0, direction);
         }
+
     }
 
     private float getScrollDirection(final int targetPosition) {
@@ -253,13 +258,13 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
     }
 
     @Override
-    public int scrollHorizontallyBy(final int dx, final RecyclerView.Recycler recycler, final RecyclerView.State state) {
+    public int scrollHorizontallyBy( int dx, final RecyclerView.Recycler recycler, final RecyclerView.State state) {
         if (VERTICAL == mOrientation) {
             return 0;
         }
 
-        Log.e("1229","打印dx"+String.valueOf(dx));
-            return scrollBy(dx*2, recycler, state);
+        return (int) scrollBy(dx*1.6f, recycler, state);
+
     }
 
     /**
@@ -298,7 +303,46 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             mLayoutHelper.mScrollOffset -= resultScroll;
         } else {
             final int maxOffset = getMaxScrollOffset();
+            if (0 > mLayoutHelper.mScrollOffset + diff) {
+                resultScroll = -mLayoutHelper.mScrollOffset; //to make it 0
+            } else if (mLayoutHelper.mScrollOffset + diff > maxOffset) {
+                resultScroll = maxOffset - mLayoutHelper.mScrollOffset; //to make it maxOffset
+            } else {
+                resultScroll = diff;
+            }
+        }
+        if (0 != resultScroll) {
+            mLayoutHelper.mScrollOffset += resultScroll;
+            fillData(recycler, state);
+        }
+        return resultScroll;
+    }
 
+    @CallSuper
+    protected float scrollBy(final float diff, @NonNull final RecyclerView.Recycler recycler, @NonNull final RecyclerView.State state) {
+        if (null == mDecoratedChildWidth || null == mDecoratedChildHeight) {
+            return 0;
+        }
+        if (0 == getChildCount() || 0 == diff) {
+            return 0;
+        }
+        final float resultScroll;
+        if (mCircleLayout) {
+            resultScroll = diff;
+
+            mLayoutHelper.mScrollOffset += resultScroll;
+
+            final int maxOffset = getScrollItemSize() * mItemsCount;
+            while (0 > mLayoutHelper.mScrollOffset) {
+                mLayoutHelper.mScrollOffset += maxOffset;
+            }
+            while (mLayoutHelper.mScrollOffset > maxOffset) {
+                mLayoutHelper.mScrollOffset -= maxOffset;
+            }
+
+            mLayoutHelper.mScrollOffset -= resultScroll;
+        } else {
+            final int maxOffset = getMaxScrollOffset();
             if (0 > mLayoutHelper.mScrollOffset + diff) {
                 resultScroll = -mLayoutHelper.mScrollOffset; //to make it 0
             } else if (mLayoutHelper.mScrollOffset + diff > maxOffset) {
@@ -459,9 +503,11 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         final View view = bindChild(layoutOrder.mItemAdapterPosition, recycler);
         ViewCompat.setElevation(view, i);
         ItemTransformation transformation = null;
+
         if (null != mViewPostLayout) {
             transformation = mViewPostLayout.transformChild(view, layoutOrder.mItemPositionDiff, mOrientation);
         }
+
         if (null == transformation) {
             view.layout(start, top, end, bottom);
         } else {
@@ -599,7 +645,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         if (VERTICAL == mOrientation) {
             dimenDiff = (getHeightNoPadding() - mDecoratedChildHeight) / 2;
         } else {
-            dimenDiff = (getWidthNoPadding() - mDecoratedChildWidth) / 2;
+           dimenDiff = (getWidthNoPadding() - mDecoratedChildWidth) / 2;
         }
         //noinspection NumericCastThatLosesPrecision
         return (int) Math.round(Math.signum(itemPositionDiff) * dimenDiff * smoothPosition);
