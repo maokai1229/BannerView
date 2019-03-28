@@ -25,9 +25,8 @@ public class BannnerPostLayoutListener implements CarouselLayoutManager.PostLayo
             translateX = 0;
         }
         else {
-            final float translateXGeneral = child.getMeasuredWidth() * (1 - scale) * 6.3f;
-
-         translateX = Math.signum(itemPositionToCenterDiff) * translateXGeneral;
+            final float translateXGeneral = child.getMeasuredWidth() * (1 - scale) * 6.8f;
+            translateX = Math.signum(itemPositionToCenterDiff) * translateXGeneral;
             translateY = 0;
         }
 

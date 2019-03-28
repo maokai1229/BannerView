@@ -159,4 +159,6 @@ public class MultiItemTypeAdapter<T extends IMulTypeHelper> extends RecyclerView
     public interface OnItemViewClickListener {
         void onItemViewClick(View v);
     }
+
+
 }

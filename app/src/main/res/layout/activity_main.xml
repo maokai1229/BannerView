@@ -11,7 +11,8 @@
        android:layout_width="match_parent"
        android:layout_height="160dp"
        android:overScrollMode="never"
-       app:paddingLeftRight="0dp"/>
+
+       app:paddingLeftRight="20dp"/>
     <!--play_recycler_view   android:id="@+id/play_recycler_view"-->
 
 

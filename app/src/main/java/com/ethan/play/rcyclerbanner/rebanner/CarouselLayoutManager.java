@@ -12,6 +12,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
     private final int mOrientation;
     private final boolean mCircleLayout;
 
-    private int mPendingScrollPosition;
+    public  int mPendingScrollPosition;
 
     private final LayoutHelper mLayoutHelper = new LayoutHelper(MAX_VISIBLE_ITEMS);
 
@@ -184,12 +185,42 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             throw new IllegalArgumentException("position can't be less then 0. position is : " + position);
         }
         mPendingScrollPosition = position;
+
         requestLayout();
     }
+
+//    @SuppressWarnings("RefusedBequest")
+//    @Override
+//    public void smoothScrollToPosition(@NonNull final RecyclerView recyclerView, @NonNull final RecyclerView.State state, final int position) {
+//        final LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
+//            @Override
+//            public int calculateDyToMakeVisible(final View view, final int snapPreference) {
+//                if (!canScrollVertically()) {
+//                    return 0;
+//                }
+//
+//                return getOffsetForCurrentView(view);
+//            }
+//
+//            @Override
+//            public int calculateDxToMakeVisible(final View view, final int snapPreference) {
+//                if (!canScrollHorizontally()) {
+//                    return 0;
+//                }
+//                return getOffsetForCurrentView(view);
+//            }
+//        };
+//
+//        linearSmoothScroller.setTargetPosition(position);
+//        startSmoothScroll(linearSmoothScroller);
+//    }
 
     @SuppressWarnings("RefusedBequest")
     @Override
     public void smoothScrollToPosition(@NonNull final RecyclerView recyclerView, @NonNull final RecyclerView.State state, final int position) {
+
+
+
         final LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
             @Override
             public int calculateDyToMakeVisible(final View view, final int snapPreference) {
@@ -207,11 +238,49 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
                 }
                 return getOffsetForCurrentView(view);
             }
+
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                /*
+                     控制单位速度,  毫秒/像素, 滑动1像素需要多少毫秒.
+
+                     默认为 (25F/densityDpi) 毫秒/像素
+
+                     mdpi上, 1英寸有160个像素点, 25/160,
+                     xxhdpi,1英寸有480个像素点, 25/480,
+                  */
+
+                return 9F / displayMetrics.densityDpi;//可以减少时间，默认25F
+                //return super.calculateSpeedPerPixel(displayMetrics);
+            }
+
+            @Override
+            protected int calculateTimeForScrolling(int dx) {
+               /*
+                   控制距离, 然后根据上面那个方(calculateSpeedPerPixel())提供的速度算出时间,
+
+                   默认一次 滚动 TARGET_SEEK_SCROLL_DISTANCE_PX = 10000个像素,
+
+                   在此处可以减少该值来达到减少滚动时间的目的.
+                */
+
+                //间接计算时提高速度，也可以直接在calculateSpeedPerPixel提高
+                if (dx > 3000) {
+                    dx = 3000;
+                }
+
+                int time = super.calculateTimeForScrolling(dx);
+                return time;
+            }
+
+
         };
 
         linearSmoothScroller.setTargetPosition(position);
         startSmoothScroll(linearSmoothScroller);
     }
+
 
     @Override
     @Nullable
@@ -263,8 +332,13 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             return 0;
         }
 
-        return (int) scrollBy(dx*1.6f, recycler, state);
+        Log.e("dx",dx+"");
 
+        if (Math.abs(dx)>12){
+            return (int) scrollBy(dx*1.8f, recycler, state);
+
+        }else
+            return (int) scrollBy(dx*1.2f, recycler, state);
     }
 
     /**

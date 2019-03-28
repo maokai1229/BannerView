@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import com.ethan.play.rcyclerbanner.bean.BanberItem;
 import com.ethan.play.rcyclerbanner.rebanner.BannerItemAdapter;
 import com.ethan.play.rcyclerbanner.rebanner.BannerView;
-import com.ethan.play.rcyclerbanner.rebanner.ReBanner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,11 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         bannerView = findViewById(R.id.banner);
         adapter = new BannerItemAdapter(this,itemList);
-//        bannerView.setPaddingLeftRight(20);
-     //   bannerRv = findViewById(R.id.play_recycler_view);
-//        ReBanner reBanner = ReBanner.newInstance();
-//        reBanner.init(bannerView, adapter);
-        bannerView.init(adapter);
+        bannerView.init(adapter).setDelayTime(5000).startAutoPlay();
     }
 
 }

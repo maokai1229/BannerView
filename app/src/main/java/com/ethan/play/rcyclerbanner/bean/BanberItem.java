@@ -16,6 +16,7 @@ public class BanberItem implements IMulTypeHelper {
 
     private int color;
     private String text;
+    private int padding;
 
     @Override
     public int getItemLayoutId(Context context) {
@@ -29,6 +30,10 @@ public class BanberItem implements IMulTypeHelper {
 
         imageView.setBackgroundColor(getColor());
         textView.setText(getText());
+    }
+
+    public void setPadding(int padding) {
+        this.padding = padding;
     }
 
     public int getColor() {
@@ -46,4 +51,6 @@ public class BanberItem implements IMulTypeHelper {
     public void setText(String text) {
         this.text = text;
     }
+
+
 }

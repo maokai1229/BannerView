@@ -18,12 +18,16 @@ import android.widget.Scroller;
  * @author Ethan.mao
  * @date 2019/3/26
  */
-public class BannerSnapHelper extends SnapHelper {
+public class BannerSnapHelper extends AbstractSnapHelper {
     private static final float INVALID_DISTANCE = 0.2F;
     @Nullable
     public OrientationHelper mVerticalHelper;
     @Nullable
     public OrientationHelper mHorizontalHelper;
+
+
+    public int currentPosition;
+
 
     public BannerSnapHelper() {
     }
@@ -47,10 +51,8 @@ public class BannerSnapHelper extends SnapHelper {
 
 
 
-
     public int findTargetSnapPosition(LayoutManager layoutManager, int velocityX, int velocityY) {
 
-        Log.e("findTargetSnapPosition",velocityX+"");
         if (!(layoutManager instanceof ScrollVectorProvider)) {
             return -1;
         } else {
@@ -63,6 +65,8 @@ public class BannerSnapHelper extends SnapHelper {
                     return -1;
                 } else {
                     int currentPosition = layoutManager.getPosition(currentView);
+                    this.currentPosition = currentPosition;
+                    Log.e("current",currentPosition+"");
                     if (currentPosition == -1) {
                         return -1;
                     } else {
@@ -73,7 +77,9 @@ public class BannerSnapHelper extends SnapHelper {
                         } else {
                             int hDeltaJump;
                             if (layoutManager.canScrollHorizontally()) {
+
                                 hDeltaJump = this.estimateNextPositionDiffForFling(layoutManager, this.getHorizontalHelper(layoutManager), velocityX, 0);
+                                Log.e("velocityX",hDeltaJump+"");
                                 if (vectorForEnd.x < 0.0F) {
                                     hDeltaJump = -hDeltaJump;
                                 }
@@ -92,6 +98,7 @@ public class BannerSnapHelper extends SnapHelper {
                             }
 
                             int deltaJump = layoutManager.canScrollVertically() ? vDeltaJump : hDeltaJump;
+
                             if (deltaJump == 0) {
                                 return -1;
                             } else {
@@ -103,8 +110,7 @@ public class BannerSnapHelper extends SnapHelper {
                                 if (targetPos >= itemCount) {
                                     targetPos = itemCount - 1;
                                 }
-
-                                Log.e("targetPos",targetPos+"");
+                                Log.e("taeget",targetPos+"");
                                 return targetPos;
                             }
                         }
@@ -122,6 +128,10 @@ public class BannerSnapHelper extends SnapHelper {
         }
     }
 
+    public int getCenterViewPosition(LayoutManager layoutManager){
+        return  layoutManager.getPosition(findCenterView(layoutManager, this.getHorizontalHelper(layoutManager)));
+    }
+
     private int distanceToCenter(@NonNull LayoutManager layoutManager, @NonNull View targetView, OrientationHelper helper) {
         int childCenter = helper.getDecoratedStart(targetView) + helper.getDecoratedMeasurement(targetView) / 2;
         int containerCenter;
@@ -130,10 +140,11 @@ public class BannerSnapHelper extends SnapHelper {
         } else {
             containerCenter = helper.getEnd() / 2;
         }
-        Log.e("childCenter",childCenter+"");
-        Log.e("comtainerCenter",containerCenter+"");
 
+       // Log.e("center",childCenter - containerCenter+"");
         return childCenter - containerCenter;
+
+
     }
 
     private int estimateNextPositionDiffForFling(LayoutManager layoutManager, OrientationHelper helper, int velocityX, int velocityY) {
@@ -161,7 +172,7 @@ public class BannerSnapHelper extends SnapHelper {
                     center = helper.getEnd() / 2;
                 }
 
-            int absClosest = 2147483647;
+            int absClosest = 216168461;
 
             for(int i = 0; i < childCount; ++i) {
                 View child = layoutManager.getChildAt(i);
@@ -171,6 +182,18 @@ public class BannerSnapHelper extends SnapHelper {
                     absClosest = absDistance;
                     closestChild = child;
                 }
+//                }else {
+//                    // 产生滑动
+//
+//                    // 判断方向
+//
+//                      // 左滑
+//
+//                      // 右滑
+//
+//
+//
+//                }
             }
 
             return closestChild;
